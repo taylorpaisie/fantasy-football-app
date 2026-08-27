@@ -1,11 +1,18 @@
-from app import app, dataframe_records, initial_state, render_page
+from app import app, configured_database_path, dataframe_records, initial_state, render_page, server
 from src.data.loaders import generate_sample_players
 
 
 def test_dash_index_is_served():
+    assert server is app.server
     response = app.server.test_client().get("/")
     assert response.status_code == 200
     assert b"Fantasy Football War Room" in response.data
+
+
+def test_database_path_can_use_persistent_storage(monkeypatch, tmp_path):
+    persistent_path = tmp_path / "fantasy" / "state.db"
+    monkeypatch.setenv("FANTASY_DB_PATH", str(persistent_path))
+    assert configured_database_path() == persistent_path
 
 
 def test_dash_layout_and_initial_state():

@@ -62,8 +62,53 @@ Then open `http://127.0.0.1:8050`.
 Run the tests with:
 
 ```bash
+pip install -r requirements-dev.txt
 pytest
 ```
+
+## Deploy to Posit
+
+The repository is ready to publish as a **Dash** application. The deployment
+entrypoint is `app:app`, the primary file is `app.py`, and the requested Python
+runtime is 3.11. Posit installs the production packages from `requirements.txt`.
+
+### Posit Connect Cloud
+
+1. In Connect Cloud, choose **Publish** and then **Dash**.
+2. Authorize access to this GitHub repository, select the `main` branch, and
+   choose `app.py` as the primary file.
+3. Select Python 3.11 and publish.
+4. Add `ESPN_LEAGUE_ID`, `ESPN_SEASON`, `ESPN_S2`, and `ESPN_SWID` as deployment
+   secrets/environment variables when ESPN access is needed. Do not upload a
+   local `.env` file.
+
+Connect Cloud application files written at runtime are ephemeral. Draft state is
+kept in the browser session, but the **Save Draft** SQLite feature should not be
+treated as durable storage there.
+
+### Posit Connect server
+
+Install the publishing CLI with the development requirements, register the
+server once, and deploy from the project root:
+
+```bash
+pip install -r requirements-dev.txt
+rsconnect add --server https://connect.example.com --name my-connect --api-key "$CONNECT_API_KEY"
+rsconnect deploy dash \
+  --name my-connect \
+  --entrypoint app:app \
+  --title "Fantasy Football War Room" \
+  --exclude .venv-1 \
+  .
+```
+
+Set ESPN credentials in Connect's content environment settings. For durable
+SQLite saves, ask the Connect administrator for a writable persistent-storage
+mount and set `FANTASY_DB_PATH` to an absolute file path on that mount, such as
+`/mnt/fantasy-war-room/fantasy_war_room.db`. Without that setting, the app uses
+`data/fantasy_war_room.db` inside the deployment bundle; it works, but files
+written there are lost when a new bundle is deployed and are unsafe with
+multiple application processes.
 
 ## ESPN configuration
 

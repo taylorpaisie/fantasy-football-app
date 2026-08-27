@@ -29,7 +29,17 @@ load_dotenv(ROOT / ".env")
 with (ROOT / "config" / "league_config.yaml").open(encoding="utf-8") as handle:
     CONFIG: dict[str, Any] = yaml.safe_load(handle)
 
-DATABASE = Database(ROOT / "data" / "fantasy_war_room.db")
+
+def configured_database_path() -> Path:
+    """Return a local default or an operator-provided persistent database path."""
+    configured = os.getenv("FANTASY_DB_PATH")
+    if not configured:
+        return ROOT / "data" / "fantasy_war_room.db"
+    path = Path(configured).expanduser()
+    return path if path.is_absolute() else ROOT / path
+
+
+DATABASE = Database(configured_database_path())
 CARD = {"background": "#17202b", "border": "1px solid #303b49", "borderRadius": "10px", "padding": "16px"}
 MUTED = {"color": "#121213"}
 BUTTON = {"padding": "9px 16px", "border": 0, "borderRadius": "7px", "cursor": "pointer", "fontWeight": 700}
@@ -493,4 +503,8 @@ def import_espn_draft(_clicks, snapshot, state_data):
 
 if __name__ == "__main__":
     debug = os.getenv("DASH_DEBUG", "false").lower() == "true"
-    app.run(debug=debug, host="127.0.0.1", port=8050)
+    app.run(
+        debug=debug,
+        host=os.getenv("DASH_HOST", "127.0.0.1"),
+        port=int(os.getenv("PORT", "8050")),
+    )
