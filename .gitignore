@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+coverage.xml
+.coverage
+htmlcov/
+
+# Environments and secrets
+.venv/
+.venv-*/
+venv/
+env/
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+*.pem
+*.key
+*credentials*.json
+*secrets*.json
+
+# Local application data
+data/*.db
+data/*.sqlite*
+data/local/
+saved_states/
+*.draft-state.json
+
+# Jupyter and editors
+.ipynb_checkpoints/
+.vscode/
+.idea/
+*.code-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini

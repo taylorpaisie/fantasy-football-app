@@ -1,0 +1,44 @@
+platform: ESPN Fantasy Football
+season: 2026
+league_size: 16
+draft_type: snake
+draft_position: 10
+scoring: standard
+rounds: 15
+simulation_count: 5000
+simulation_seed: 2026
+
+roster:
+  QB: 1
+  RB: 2
+  WR: 2
+  TE: 1
+  FLEX: 1
+  D/ST: 1
+  K: 1
+
+recommendation_weights:
+  player_value: 0.24
+  projected_points: 0.18
+  adp_value: 0.08
+  tier_value: 0.10
+  scarcity: 0.14
+  roster_need: 0.12
+  availability_risk: 0.10
+  replacement_value: 0.04
+
+simulation_weights:
+  adp: 0.38
+  consensus_rank: 0.20
+  espn_rank: 0.25
+  projected_points: 0.07
+  roster_need: 0.10
+  reach_probability: 0.08
+  randomness: 0.22
+
+strategy:
+  early_round_cutoff: 8
+  second_qb_penalty_before_round: 10
+  defense_kicker_round: 13
+  max_early_same_position: 4
+
