@@ -31,7 +31,7 @@ with (ROOT / "config" / "league_config.yaml").open(encoding="utf-8") as handle:
 
 DATABASE = Database(ROOT / "data" / "fantasy_war_room.db")
 CARD = {"background": "#17202b", "border": "1px solid #303b49", "borderRadius": "10px", "padding": "16px"}
-MUTED = {"color": "#9aa7b5"}
+MUTED = {"color": "#121213"}
 BUTTON = {"padding": "9px 16px", "border": 0, "borderRadius": "7px", "cursor": "pointer", "fontWeight": 700}
 TAB_STYLE = {
     "backgroundColor": "#161b22",
