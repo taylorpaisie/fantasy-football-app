@@ -41,7 +41,7 @@ def configured_database_path() -> Path:
 
 DATABASE = Database(configured_database_path())
 CARD = {"background": "#17202b", "border": "1px solid #303b49", "borderRadius": "10px", "padding": "16px"}
-MUTED = {"color": "#121213"}
+MUTED = {"color": "#CFCFD0"}
 BUTTON = {"padding": "9px 16px", "border": 0, "borderRadius": "7px", "cursor": "pointer", "fontWeight": 700}
 TAB_STYLE = {
     "backgroundColor": "#161b22",
@@ -274,7 +274,8 @@ def settings_page(settings, snapshot, state_data) -> html.Div:
         html.Label("Season"), dcc.Input(id="season", type="number", value=settings.get("season", 2026), style={"display": "block", "padding": "9px", "width": "320px"}),
         html.Label("Monte Carlo simulations"), dcc.Input(id="simulation-count", type="number", min=100, max=20000, step=100,
                                                           value=settings.get("simulation_count", 5000), style={"display": "block", "padding": "9px", "width": "320px"}),
-        html.Div("Private credentials detected" if os.getenv("ESPN_S2") and os.getenv("ESPN_SWID") else "Public-league mode",
+        html.Div("Private credentials detected" if os.getenv("ESPN_S2") and os.getenv("ESPN_SWID") else
+                 "Public-league mode — private leagues require ESPN_S2 and ESPN_SWID in .env",
                  style={**MUTED, "margin": "12px 0"}),
         html.Button("Test ESPN Connection", id="test-espn-btn", n_clicks=0, style={**BUTTON, "background": "#1f6feb", "color": "white"}),
         html.Button("Refresh League Data", id="refresh-espn-btn", n_clicks=0, style={**BUTTON, "marginLeft": "10px"}),

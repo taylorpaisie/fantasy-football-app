@@ -94,9 +94,33 @@ def test_invalid_espn_response_becomes_safe_error():
     def broken_factory(**kwargs):
         raise RuntimeError("401 unauthorized with internal details")
 
-    with pytest.raises(ESPNConnectionError, match="rejected access") as error:
+    with pytest.raises(ESPNConnectionError, match="league is private") as error:
         ESPNClient(ESPNCredentials(123), league_factory=broken_factory).connect()
     assert "internal details" not in str(error.value)
+
+
+def test_private_league_without_cookies_has_actionable_error():
+    class ESPNAccessDenied(Exception):
+        pass
+
+    def private_league(**kwargs):
+        raise ESPNAccessDenied("espn_s2 and swid are required")
+
+    with pytest.raises(ESPNConnectionError, match="league is private") as error:
+        ESPNClient(ESPNCredentials(123), league_factory=private_league).connect()
+    assert "local .env file" in str(error.value)
+
+
+def test_rejected_private_credentials_are_distinguished_from_missing_cookies():
+    class ESPNAccessDenied(Exception):
+        pass
+
+    def rejected_credentials(**kwargs):
+        raise ESPNAccessDenied("Access denied")
+
+    credentials = ESPNCredentials(123, espn_s2="expired", swid="{expired}")
+    with pytest.raises(ESPNConnectionError, match="rejected the private-league credentials"):
+        ESPNClient(credentials, league_factory=rejected_credentials).connect()
 
 
 def test_normalized_espn_draft_import_and_manual_history_protection():

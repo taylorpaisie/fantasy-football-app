@@ -96,9 +96,22 @@ class ESPNClient:
             )
         except Exception as exc:
             message = str(exc).lower()
-            if any(token in message for token in ("401", "403", "private", "auth", "cookie")):
-                detail = "ESPN rejected access. For a private league, refresh both ESPN_S2 and ESPN_SWID."
-            elif any(token in message for token in ("404", "not found", "invalid league")):
+            exception_name = type(exc).__name__.lower()
+            access_denied = exception_name == "espnaccessdenied" or any(
+                token in message
+                for token in ("401", "403", "access denied", "private", "auth", "cookie", "espn_s2", "swid")
+            )
+            invalid_league = exception_name == "espninvalidleague" or any(
+                token in message for token in ("404", "not found", "invalid league")
+            )
+            if access_denied and not self.credentials.has_private_auth:
+                detail = (
+                    "This ESPN league is private. Add both ESPN_S2 and ESPN_SWID from an "
+                    "authenticated ESPN browser session to the local .env file, then restart the app."
+                )
+            elif access_denied:
+                detail = "ESPN rejected the private-league credentials. Refresh both ESPN_S2 and ESPN_SWID."
+            elif invalid_league:
                 detail = "ESPN could not find that league for the selected season."
             else:
                 detail = "ESPN is unavailable or returned an unexpected response. Offline mode is still available."
@@ -257,4 +270,3 @@ class ESPNClient:
                 }
             )
         return pd.DataFrame(rows)
-
